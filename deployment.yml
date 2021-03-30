@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rack-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rack-app
+  template:
+    metadata:
+      labels:
+        app: rack-app
+    spec:
+      volumes:
+      - name: service-account-creds
+        secret:
+          secretName: service-account-creds
+      containers:
+      # [Application contianer]
+      - name: rack-app-sha256-1
+        image: gcr.io/GCP_PROJECT_ID/rack-app:latest
+
+      # [START ESPv2: Envoy-based proxy]
+      - name: esp
+        image: gcr.io/endpoints-release/endpoints-runtime:2
+        args: [
+          "--listener_port", "8081",
+          "--backend", "127.0.0.1:3000",
+          "--service", "rack-app-api.endpoints.YOUR-PROJECT-ID.cloud.goog",
+          "--rollout_strategy", "managed",
+          "--service_account_key", "/etc/nginx/creds/service-account-creds.json"
+        ]
+        volumeMounts:
+        - mountPath: /etc/nginx/creds
+          name: service-account-creds
+          readOnly: true
+      # [END ESPv2]
+        ports:
+          - containerPort: 8081
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rack-app
+  name: rack-app-service
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    app: rack-app
+  type: LoadBalancer
