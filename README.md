@@ -16,7 +16,7 @@ https://cloud.google.com/endpoints/docs/openapi/get-started-kubernetes-engine
 
 Sample application reads two paths.
 
-`/` (root path)
+`/` (root path) \
 `/hello` (authentication is applied on this path using API_KEY)
 
 Once everyting is running you can make the following request.
