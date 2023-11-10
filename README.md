@@ -39,3 +39,5 @@ Now generate an api key from API & Services section in the console or use an exi
 It should authenticate successfully and respond.
 
 ```{"message":"Hello World! - 127.0.0.1"}```
+
+## Blog Post URL: https://medium.com/@ajaz.farhad19/implementing-api-key-based-authentication-for-a-ruby-rack-application-deployed-on-google-kubernetes-b5d0a7ddc22a
